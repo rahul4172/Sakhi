@@ -158,6 +158,7 @@ export default function Dashboard({ sessionId, onLogout }) {
               {activeTab === 'griha' && <div className="max-w-4xl mx-auto"><GrihaDashboard profile={profile} sessionId={sessionId} /></div>}
               {activeTab === 'literacy' && <div className="max-w-4xl mx-auto"><FinancialLiteracy sessionId={sessionId} /></div>}
               {activeTab === 'matchmaker' && <div className="max-w-4xl mx-auto"><SchemeMatchmaker profile={profile} sessionId={sessionId} /></div>}
+              {activeTab === 'schemes' && <div className="max-w-4xl mx-auto"><SchemeMatchmaker profile={profile} sessionId={sessionId} /></div>}
               {activeTab === 'group' && <div className="max-w-4xl mx-auto"><GroupDashboard sessionId={sessionId} /></div>}
               {activeTab === 'admin' && <div className="max-w-4xl mx-auto"><AdminDashboard /></div>}
               {activeTab === 'goals' && <GoalsDashboard sessionId={sessionId} />}

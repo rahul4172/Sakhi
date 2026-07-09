@@ -8,7 +8,24 @@ export default function SchemeMatchmaker({ profile, sessionId }) {
 
   const eligible = matchData?.eligible || [];
   const ineligible = matchData?.ineligible || [];
-  const simulatedScore = profile?.currentScore || 45;
+  const simulatedScore = profile?.currentScore || 0;
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-[#6B7280] space-y-4">
+        <div className="w-12 h-12 border-4 border-surface-200 border-t-primary-600 rounded-full animate-spin"></div>
+        <p className="font-semibold text-[#111827] animate-pulse">Matching government schemes & benefits...</p>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="text-center py-20 space-y-4 bg-white border border-surface-200 rounded-[18px] p-8 max-w-md mx-auto">
+        <p className="text-danger-600 font-semibold">Failed to load qualified schemes. Please try again later.</p>
+      </div>
+    );
+  }
 
   return (
     <FadeContent className="max-w-[1200px] mx-auto pb-12 space-y-8">
