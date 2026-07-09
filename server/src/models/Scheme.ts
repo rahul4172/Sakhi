@@ -8,6 +8,7 @@ export interface IScheme extends Document {
   eligibility: string[];
   maxAmount: number;
   interestRate?: number;
+  minScore?: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -19,7 +20,8 @@ const SchemeSchema: Schema = new Schema({
   description: { type: String },
   eligibility: [{ type: String }],
   maxAmount: { type: Number, required: true },
-  interestRate: { type: Number }
+  interestRate: { type: Number },
+  minScore: { type: Number, default: 0 }
 }, { timestamps: true });
 
 export default mongoose.models.Scheme || mongoose.model<IScheme>('Scheme', SchemeSchema);
