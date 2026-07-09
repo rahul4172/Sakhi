@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary-50: #EEF2FF;
+  --color-primary-100: #E0E7FF;
+  --color-primary-200: #C7D2FE;
+  --color-primary-300: #A5B4FC;
+  --color-primary-400: #818CF8;
+  --color-primary-500: #6366F1;
+  --color-primary-600: #4F46E5; /* Deep Indigo (Primary) */
+  --color-primary-700: #4338CA;
+  --color-primary-800: #3730A3;
+  --color-primary-900: #312E81;
+  --color-primary-950: #1E1B4B;
+
+  --color-secondary-50: #F5F3FF;
+  --color-secondary-100: #EDE9FE;
+  --color-secondary-200: #DDD6FE;
+  --color-secondary-300: #C4B5FD;
+  --color-secondary-400: #A78BFA;
+  --color-secondary-500: #8B5CF6;
+  --color-secondary-600: #7C3AED; /* Secondary */
+  --color-secondary-700: #6D28D9;
+  --color-secondary-800: #5B21B6;
+  --color-secondary-900: #4C1D95;
+
+  --color-accent-50: #F0FDFA;
+  --color-accent-100: #CCFBF1;
+  --color-accent-200: #99F6E4;
+  --color-accent-300: #5EEAD4;
+  --color-accent-400: #2DD4BF;
+  --color-accent-500: #14B8A6; /* Accent */
+  --color-accent-600: #0D9488;
+  --color-accent-700: #0F766E;
+
+  --color-surface-50: #F8FAFC; /* Background */
+  --color-surface-100: #F1F5F9;
+  --color-surface-200: #E2E8F0;
+  --color-surface-300: #CBD5E1;
+  --color-surface-400: #94A3B8;
+  --color-surface-500: #64748B;
+  --color-surface-600: #475569;
+  --color-surface-700: #334155;
+  --color-surface-800: #1E293B;
+  --color-surface-900: #0F172A;
+
+  --color-danger-500: #DC2626;
+  --color-success-500: #16A34A;
+  --color-warning-500: #F59E0B;
+
+  --font-sans: "Inter", "SF Pro Display", "Plus Jakarta Sans", sans-serif;
+  --font-display: "Inter", "SF Pro Display", "Plus Jakarta Sans", sans-serif;
+
+  --shadow-premium: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
+  --shadow-premium-hover: 0 12px 30px -4px rgba(15, 23, 42, 0.08);
+  
+  --radius-xl: 18px;
+}
+
+@layer base {
+  body {
+    @apply bg-surface-50 text-[#111827] font-sans antialiased overflow-x-hidden;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-bold tracking-tight text-[#111827];
+  }
+  p {
+    @apply text-[#6B7280];
+  }
+}
+
+@layer components {
+  .premium-card {
+    @apply bg-white rounded-[18px] shadow-premium border border-[#E5E7EB] p-6 transition-all duration-300;
+  }
+  
+  .premium-card:hover {
+    @apply shadow-premium-hover -translate-y-[2px];
+  }
+  
+  .premium-button {
+    @apply bg-primary-600 text-white rounded-[12px] font-semibold px-6 py-3 transition-all duration-200 active:scale-95 hover:bg-primary-700 shadow-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:active:scale-100 disabled:hover:bg-primary-600;
+  }
+
+  .premium-input {
+    @apply w-full bg-white rounded-[12px] border border-[#E5E7EB] p-4 text-[#111827] focus:ring-2 focus:ring-primary-400 focus:border-primary-400 outline-none transition-all duration-200 placeholder-[#9CA3AF];
+  }
+
+  /* Utility for hiding scrollbars but keeping functionality */
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
