@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Gift, Zap, TrendingUp, CheckCircle, ShieldAlert, Award, Loader2, Sparkles, Receipt, Copy, Check, ExternalLink } from 'lucide-react';
 import FadeContent from './ui/FadeContent';
 import { useLanguage } from '../contexts/LanguageContext';
+import { API_BASE_URL } from '../api/client';
 
 export default function RewardsDashboard({ sessionId, profile, onScoreUpdate }) {
   const [balance, setBalance] = useState(0);
@@ -16,7 +17,7 @@ export default function RewardsDashboard({ sessionId, profile, onScoreUpdate }) 
 
   const fetchRewardsData = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/rewards/${sessionId}`, {
+      const res = await fetch(`${API_BASE_URL}/api/rewards/${sessionId}`, {
         credentials: 'include'
       });
       if (res.ok) {
@@ -42,7 +43,7 @@ export default function RewardsDashboard({ sessionId, profile, onScoreUpdate }) 
   const earnPoints = async (amount, description) => {
     setClaiming(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/rewards/earn/${sessionId}`, {
+      const res = await fetch(`${API_BASE_URL}/api/rewards/earn/${sessionId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -69,7 +70,7 @@ export default function RewardsDashboard({ sessionId, profile, onScoreUpdate }) 
     }
     setClaiming(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/rewards/redeem/${sessionId}`, {
+      const res = await fetch(`${API_BASE_URL}/api/rewards/redeem/${sessionId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, LineChart, Line, CartesianGrid } from 'recharts';
+import { API_BASE_URL } from '../api/client';
 import FadeContent from './ui/FadeContent';
 import CountUp from './ui/CountUp';
 import { Award, Zap, ShieldCheck, TrendingUp } from 'lucide-react';
@@ -103,7 +104,7 @@ export default function ScoreSimulator({ profile, sessionId, scoreFactors }) {
   const handleSimulate = async () => {
     setLoadingExp(true);
     try {
-      const res = await fetch('http://localhost:5000/api/score/simulate', {
+      const res = await fetch(`${API_BASE_URL}/api/score/simulate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
