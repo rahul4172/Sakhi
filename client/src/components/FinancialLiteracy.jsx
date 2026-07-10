@@ -139,6 +139,7 @@ export default function FinancialLiteracy({ sessionId }) {
       const res = await fetch('http://localhost:5000/api/literacy/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ message: text, history: chatMessages.filter(m => m.role !== 'system'), language })
       });
       const data = await res.json();

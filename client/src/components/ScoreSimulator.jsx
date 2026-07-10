@@ -106,13 +106,22 @@ export default function ScoreSimulator({ profile, sessionId, scoreFactors }) {
       const res = await fetch('http://localhost:5000/api/score/simulate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           sessionId,
           score,
           factors: { savingsFreq, billPunctuality, incomeStability, shgStreak, trend }
         })
       });
+      
+      if (!res.ok) {
+        throw new Error(`Simulation failed: status ${res.status}`);
+      }
+      
       const data = await res.json();
+      if (!data.explanation) {
+        throw new Error('No explanation returned from simulation API');
+      }
       setExplanation(data.explanation);
 
     } catch (err) {

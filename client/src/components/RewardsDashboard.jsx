@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Gift, Zap, TrendingUp, CheckCircle, ShieldAlert, Award, Loader2, Sparkles, Receipt, Copy, Check, ExternalLink } from 'lucide-react';
 import FadeContent from './ui/FadeContent';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export default function RewardsDashboard({ sessionId, profile, onScoreUpdate }) {
   const [balance, setBalance] = useState(0);
@@ -11,10 +12,13 @@ export default function RewardsDashboard({ sessionId, profile, onScoreUpdate }) 
   const [claiming, setClaiming] = useState(false);
   const [message, setMessage] = useState(null);
   const [copied, setCopied] = useState(false);
+  const { t } = useLanguage();
 
   const fetchRewardsData = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/rewards/${sessionId}`);
+      const res = await fetch(`http://localhost:5000/api/rewards/${sessionId}`, {
+        credentials: 'include'
+      });
       if (res.ok) {
         const data = await res.json();
         setBalance(data.tokenBalance);
@@ -41,6 +45,7 @@ export default function RewardsDashboard({ sessionId, profile, onScoreUpdate }) 
       const res = await fetch(`http://localhost:5000/api/rewards/earn/${sessionId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ amount, description })
       });
       if (res.ok) {
@@ -59,7 +64,7 @@ export default function RewardsDashboard({ sessionId, profile, onScoreUpdate }) 
 
   const redeemReward = async (rewardId, cost, label) => {
     if (balance < cost) {
-      showFeedback('Insufficient SAKHI Coins!', 'error');
+      showFeedback(t('insufficient_tokens'), 'error');
       return;
     }
     setClaiming(true);
@@ -67,50 +72,33 @@ export default function RewardsDashboard({ sessionId, profile, onScoreUpdate }) 
       const res = await fetch(`http://localhost:5000/api/rewards/redeem/${sessionId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ rewardId, cost, label })
       });
       if (res.ok) {
         const data = await res.json();
         setBalance(data.tokenBalance);
         setHistory(data.tokenHistory);
-        showFeedback(`Redeemed ${label} successfully on-chain!`, 'success');
+        showFeedback(`${label} ${t('redeem_success')}`, 'success');
         
         // If they bought a trust score boost, trigger score update callback on parent dashboard
         if (rewardId === 'trust_boost' && onScoreUpdate) {
           onScoreUpdate();
         }
-      } else {
-        const errData = await res.json();
-        showFeedback(errData.error || 'Failed to redeem reward.', 'error');
       }
     } catch (err) {
       console.error(err);
-      showFeedback('Redemption failed. Try again.', 'error');
+      showFeedback('Redemption failed. Please try again.', 'error');
     } finally {
       setClaiming(false);
     }
   };
 
   const copyToClipboard = () => {
-    if (walletAddress) {
-      navigator.clipboard.writeText(walletAddress);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
-  };
-
-  const getExplorerLink = (txHash) => {
-    if (!txHash) return '#';
-    if (blockchainNetwork === 'base-sepolia') {
-      return `https://sepolia.basescan.org/tx/${txHash}`;
-    }
-    // Fallback/Mock explorer
-    return `https://sepolia.basescan.org/tx/${txHash}`;
-  };
-
-  const formatAddress = (addr) => {
-    if (!addr) return '';
-    return `${addr.substring(0, 6)}...${addr.substring(addr.length - 4)}`;
+    if (!walletAddress) return;
+    navigator.clipboard.writeText(walletAddress);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   const showFeedback = (text, type) => {
@@ -125,11 +113,20 @@ export default function RewardsDashboard({ sessionId, profile, onScoreUpdate }) 
   );
 
   const STORE_ITEMS = [
-    { id: 'recharge_50', label: '₹50 Mobile Recharge Voucher', cost: 500, description: 'Get ₹50 off on your next mobile prepaid/postpaid recharge.', icon: <Zap className="w-6 h-6 text-warning-500" /> },
-    { id: 'grocery_100', label: '₹100 Grocery Voucher', cost: 1000, description: 'Redeem for local store grocery purchase discounts.', icon: <Sparkles className="w-6 h-6 text-success-500" /> },
-    { id: 'trust_boost', label: 'SakhiScore Trust Boost (+5)', cost: 300, description: 'Instantly add +5 points to your SakhiScore for faster loan matching.', icon: <Award className="w-6 h-6 text-primary-500" /> },
-    { id: 'advisor_premium', label: 'Premium Financial Advisory', cost: 400, description: 'Unlock 1-on-1 advisor chat for scheme application assistance.', icon: <Gift className="w-6 h-6 text-info-500" /> }
+    { id: 'recharge_50', label: t('store_recharge_label'), cost: 500, description: t('store_recharge_desc'), icon: <Zap className="w-6 h-6 text-warning-500" /> },
+    { id: 'grocery_100', label: t('store_grocery_label'), cost: 1000, description: t('store_grocery_desc'), icon: <Sparkles className="w-6 h-6 text-success-500" /> },
+    { id: 'trust_boost', label: t('store_trust_label'), cost: 300, description: t('store_trust_desc'), icon: <Award className="w-6 h-6 text-primary-500" /> },
+    { id: 'advisor_premium', label: t('store_advisor_label'), cost: 400, description: t('store_advisor_desc'), icon: <Gift className="w-6 h-6 text-info-500" /> }
   ];
+
+  const formatAddress = (addr) => {
+    if (!addr) return '';
+    return `${addr.substring(0, 6)}...${addr.substring(addr.length - 4)}`;
+  };
+
+  const getExplorerLink = (txHash) => {
+    return `https://sepolia.basescan.org/tx/${txHash}`;
+  };
 
   if (loading) {
     return (
@@ -151,7 +148,7 @@ export default function RewardsDashboard({ sessionId, profile, onScoreUpdate }) 
           <div className="inline-flex items-center gap-2 bg-white/10 px-3 py-1 rounded-full text-xs font-semibold text-white/90 mb-3 border border-white/20">
             <Sparkles className="w-3.5 h-3.5 text-warning-400" /> Blockchain Rewards Enabled
           </div>
-          <h2 className="text-3xl font-display font-bold text-white mb-2">Real Digital Reward Assets</h2>
+          <h2 className="text-3xl font-display font-bold text-white mb-2">{t('nav_rewards')}</h2>
           <p className="text-white/80 leading-relaxed text-sm">
             Earn SAKHI tokens directly to your custodial blockchain wallet by using the app, quiz participation, and paying bills. Redeem tokens for real-value vouchers and credit trust score boosts!
           </p>
@@ -186,11 +183,11 @@ export default function RewardsDashboard({ sessionId, profile, onScoreUpdate }) 
 
         {/* Balance Card */}
         <div className="relative z-10 bg-white/10 border border-white/20 p-6 rounded-2xl flex flex-col items-center justify-center min-w-[200px] backdrop-blur-sm shadow-inner">
-          <span className="text-xs uppercase tracking-widest text-white/70 font-semibold mb-1">On-Chain Balance</span>
+          <span className="text-xs uppercase tracking-widest text-white/70 font-semibold mb-1">{t('on_chain_balance')}</span>
           <div className="text-4xl font-display font-extrabold text-[#E5B59E] flex items-center gap-2 animate-pulse">
             🪙 {balance}
           </div>
-          <span className="text-[10px] text-white/60 mt-1">SAKHI Tokens</span>
+          <span className="text-[10px] text-white/60 mt-1">{t('sakhi_tokens')}</span>
         </div>
       </div>
 
@@ -213,7 +210,7 @@ export default function RewardsDashboard({ sessionId, profile, onScoreUpdate }) 
           {/* Earn Section */}
           <div className="premium-card p-6">
             <h3 className="text-lg font-bold text-[#111827] mb-2 flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-primary-600" /> Ways to Earn Tokens
+              <Sparkles className="w-5 h-5 text-primary-600" /> {t('ways_to_earn')}
             </h3>
             <p className="text-xs text-[#6B7280] mb-6">Complete activities to receive direct on-chain token distributions.</p>
             
@@ -223,8 +220,8 @@ export default function RewardsDashboard({ sessionId, profile, onScoreUpdate }) 
                   <CheckCircle className="w-5 h-5" />
                 </div>
                 <div className="flex-1">
-                  <h4 className="text-sm font-bold text-[#111827]">Complete Profile</h4>
-                  <p className="text-xs text-[#6B7280] mt-0.5">Tell us more about your business.</p>
+                  <h4 className="text-sm font-bold text-[#111827]">{t('complete_profile')}</h4>
+                  <p className="text-xs text-[#6B7280] mt-0.5">{t('complete_profile_desc')}</p>
                   <div className="mt-3 flex items-center justify-between">
                     <span className="text-xs font-bold text-primary-600 bg-primary-50 px-2.5 py-1 rounded-lg">
                       +100 SAKHI
@@ -234,7 +231,7 @@ export default function RewardsDashboard({ sessionId, profile, onScoreUpdate }) 
                         ? 'bg-success-100 text-success-800' 
                         : 'bg-warning-100 text-warning-800'
                     }`}>
-                      {isProfileSetupClaimed ? 'Claimed' : 'Earned on setup'}
+                      {isProfileSetupClaimed ? t('claimed') : t('earned_on_setup')}
                     </span>
                   </div>
                 </div>
@@ -245,14 +242,14 @@ export default function RewardsDashboard({ sessionId, profile, onScoreUpdate }) 
                   <Receipt className="w-5 h-5" />
                 </div>
                 <div className="flex-1">
-                  <h4 className="text-sm font-bold text-[#111827]">Pay Utility Bills</h4>
-                  <p className="text-xs text-[#6B7280] mt-0.5">Pay electric, water, or phone bills in BBPS.</p>
+                  <h4 className="text-sm font-bold text-[#111827]">{t('pay_utility_bills')}</h4>
+                  <p className="text-xs text-[#6B7280] mt-0.5">{t('pay_utility_bills_desc')}</p>
                   <div className="mt-3 flex items-center justify-between">
                     <span className="text-xs font-bold text-success-600 bg-success-50 px-2.5 py-1 rounded-lg">
-                      +50 SAKHI per Bill
+                      +50 SAKHI
                     </span>
                     <span className="text-[10px] font-bold text-success-800 bg-success-100 px-2 py-0.5 rounded-full">
-                      Automatic on payment
+                      {t('automatic_on_payment')}
                     </span>
                   </div>
                 </div>
@@ -263,14 +260,14 @@ export default function RewardsDashboard({ sessionId, profile, onScoreUpdate }) 
                   <Award className="w-5 h-5" />
                 </div>
                 <div className="flex-1">
-                  <h4 className="text-sm font-bold text-[#111827]">Financial Literacy</h4>
-                  <p className="text-xs text-[#6B7280] mt-0.5">Learn about savings & credit rules.</p>
+                  <h4 className="text-sm font-bold text-[#111827]">{t('financial_literacy_earn')}</h4>
+                  <p className="text-xs text-[#6B7280] mt-0.5">{t('financial_literacy_earn_desc')}</p>
                   <div className="mt-3 flex items-center justify-between">
                     <span className="text-xs font-bold text-warning-600 bg-warning-50 px-2.5 py-1 rounded-lg">
                       +25 SAKHI
                     </span>
                     <span className="text-[10px] font-bold text-[#8659AD] bg-[#FAF7FC] px-2 py-0.5 rounded-full border border-[#EBE2F4]">
-                      Earned on quiz completion
+                      {t('earned_on_quiz')}
                     </span>
                   </div>
                 </div>
@@ -281,14 +278,14 @@ export default function RewardsDashboard({ sessionId, profile, onScoreUpdate }) 
                   <TrendingUp className="w-5 h-5" />
                 </div>
                 <div className="flex-1">
-                  <h4 className="text-sm font-bold text-[#111827]">Weekly Log Streak</h4>
-                  <p className="text-xs text-[#6B7280] mt-0.5">Keep household logs daily for 7 days.</p>
+                  <h4 className="text-sm font-bold text-[#111827]">{t('weekly_log_streak')}</h4>
+                  <p className="text-xs text-[#6B7280] mt-0.5">{t('weekly_log_streak_desc')}</p>
                   <div className="mt-3 flex items-center justify-between">
                     <span className="text-xs font-bold text-info-600 bg-info-50 px-2.5 py-1 rounded-lg">
                       +50 SAKHI
                     </span>
-                    <span className="text-[10px] font-bold text-[#5569B3] bg-[#F0F2FA] px-2 py-0.5 rounded-full border border-[#D3D9ED]">
-                      Earned on 7-day streak
+                    <span className="text-[10px] font-bold text-info-800 bg-info-100 px-2 py-0.5 rounded-full">
+                      {t('earned_on_streak')}
                     </span>
                   </div>
                 </div>
@@ -299,9 +296,9 @@ export default function RewardsDashboard({ sessionId, profile, onScoreUpdate }) 
           {/* Shop Section */}
           <div className="premium-card p-6">
             <h3 className="text-lg font-bold text-[#111827] mb-2 flex items-center gap-2">
-              <Gift className="w-5 h-5 text-primary-600" /> Rewards Shop
+              <Gift className="w-5 h-5 text-primary-600" /> {t('redeem_store')}
             </h3>
-            <p className="text-xs text-[#6B7280] mb-6">Burn your tokens to redeem helpful vouchers or credit score boosts.</p>
+            <p className="text-xs text-[#6B7280] mb-6">{t('redeem_store_desc')}</p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {STORE_ITEMS.map((item) => {
@@ -332,7 +329,7 @@ export default function RewardsDashboard({ sessionId, profile, onScoreUpdate }) 
                           : 'bg-surface-100 text-surface-400 cursor-not-allowed'
                       }`}
                     >
-                      {claiming ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : canAfford ? 'Redeem Voucher' : 'Not Enough Tokens'}
+                      {claiming ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : canAfford ? t('redeem_voucher') : t('not_enough_tokens')}
                     </button>
                   </div>
                 );
@@ -345,7 +342,7 @@ export default function RewardsDashboard({ sessionId, profile, onScoreUpdate }) 
         {/* Right Side: Ledger / Transaction History (Spans 4) */}
         <div className="lg:col-span-4 premium-card p-6 flex flex-col min-h-[400px]">
           <h3 className="text-sm font-bold text-[#111827] mb-6 flex items-center gap-2 border-b border-surface-100 pb-3">
-            🪙 Ledger Transaction History
+            🪙 {t('ledger_history')}
           </h3>
           
           <div className="flex-1 overflow-y-auto max-h-[500px] space-y-4 pr-1">
@@ -354,8 +351,8 @@ export default function RewardsDashboard({ sessionId, profile, onScoreUpdate }) 
                 <div className="w-12 h-12 bg-surface-50 rounded-full flex items-center justify-center text-surface-400 mb-3 border border-surface-100">
                   <Receipt className="w-5 h-5" />
                 </div>
-                <p className="text-xs font-semibold text-[#111827]">No Ledger History</p>
-                <p className="text-[10px] text-[#6B7280] mt-0.5">Your on-chain transfers and redemptions will appear here.</p>
+                <p className="text-xs font-semibold text-[#111827]">{t('no_ledger_history')}</p>
+                <p className="text-[10px] text-[#6B7280] mt-0.5">{t('no_ledger_history_desc')}</p>
               </div>
             ) : (
               [...history].reverse().map((item, index) => {

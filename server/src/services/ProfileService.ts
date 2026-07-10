@@ -12,34 +12,19 @@ export class ProfileService {
       // Generate custodial blockchain wallet
       const wallet = blockchainService.generateUserWallet();
 
-      // Execute real on-chain minting for welcome reward
-      const txResult = await blockchainService.earnTokens(
-        wallet.address,
-        100,
-        'Profile Setup Bonus'
-      );
-
-      const historyItem = {
-        amount: 100,
-        type: 'earn' as const,
-        description: 'Profile Setup Bonus',
-        date: new Date(),
-        transactionHash: txResult.transactionHash || undefined,
-        status: txResult.status,
-        error: txResult.error
-      };
-
       profile = await profileRepository.create({ 
-        sessionId, 
+        sessionId: sessionId.toString(), 
         ...data,
         walletAddress: wallet.address,
         encryptedPrivateKey: wallet.encryptedPrivateKey,
         blockchainNetwork: blockchainService.getMode(),
-        tokenBalance: txResult.status === 'success' ? 100 : 0,
-        tokenHistory: [historyItem]
+        tokenBalance: 0,
+        tokenHistory: [],
+        currentScore: 0,
+        scoreHistory: []
       });
       // Create default settings
-      await settingsRepository.create({ userId: sessionId });
+      await settingsRepository.create({ userId: sessionId.toString() });
       return profile;
     }
   }

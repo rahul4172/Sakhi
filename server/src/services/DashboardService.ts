@@ -11,6 +11,37 @@ export class DashboardService {
     const profile = await profileRepository.findBySessionId(userId);
     if (!profile) throw new Error('Profile not found');
 
+    // Self-heal: Sync successful BBPS bill payments into the Expense ledger
+    try {
+      const Expense = require('../models/Expense').default;
+      const Biller = require('../models/Biller').default;
+      const userTransactions = await transactionRepository.findByUserId(userId);
+      const successfulTxs = userTransactions.filter((tx: any) => tx.status === 'SUCCESS');
+
+      for (const tx of successfulTxs) {
+        const existingExpense = await Expense.findOne({
+          userId,
+          description: new RegExp(tx.transactionId)
+        });
+
+        if (!existingExpense) {
+          const biller = await Biller.findOne({ billerId: tx.billerId });
+          const category = biller ? biller.category : 'utility';
+          const billerName = biller ? biller.name : 'Bill Payment';
+
+          await Expense.create({
+            userId,
+            amount: tx.amount,
+            category: category.toLowerCase(),
+            description: `${billerName} (${tx.transactionId})`,
+            date: tx.date || new Date()
+          });
+        }
+      }
+    } catch (err) {
+      console.error('Error syncing successful transactions to expense ledger:', err);
+    }
+
     const [incomes, expenses, bills, transactions] = await Promise.all([
       incomeRepository.findByUserId(userId),
       expenseRepository.findByUserId(userId),
@@ -84,51 +115,8 @@ export class DashboardService {
       value: categoryMap[cat]
     }));
 
-    // Self-heal welcome reward: if profile exists but setup bonus is not in history as 'success'
-    let welcomeBonusItem = profile.tokenHistory?.find((item: any) => 
-      item.description && (item.description.includes('Profile Setup Bonus') || item.description.includes('Profile Setup'))
-    );
-    
-    if (!welcomeBonusItem || welcomeBonusItem.status !== 'success') {
-      try {
-        if (!profile.walletAddress) {
-          const wallet = blockchainService.generateUserWallet();
-          profile.walletAddress = wallet.address;
-          profile.encryptedPrivateKey = wallet.encryptedPrivateKey;
-          profile.blockchainNetwork = blockchainService.getMode();
-        }
 
-        const txResult = await blockchainService.earnTokens(
-          profile.walletAddress,
-          100,
-          'Profile Setup Bonus'
-        );
 
-        if (!profile.tokenHistory) profile.tokenHistory = [];
-        
-        // Remove old failed item if it exists
-        profile.tokenHistory = profile.tokenHistory.filter((item: any) => 
-          !(item.description && (item.description.includes('Profile Setup Bonus') || item.description.includes('Profile Setup')))
-        );
-
-        profile.tokenHistory.push({
-          amount: 100,
-          type: 'earn' as const,
-          description: 'Profile Setup Bonus',
-          date: new Date(),
-          transactionHash: txResult.transactionHash || undefined,
-          status: txResult.status,
-          error: txResult.error
-        });
-
-        if (txResult.status === 'success') {
-          profile.tokenBalance = (profile.tokenBalance ?? 0) + 100;
-        }
-        await profile.save();
-      } catch (err) {
-        console.error('Error in self-healing welcome bonus:', err);
-      }
-    }
 
     // Merge incomes and expenses into a unified recent activity log, sorted by date descending
     const mergedActivity = [

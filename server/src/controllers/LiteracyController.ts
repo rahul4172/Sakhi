@@ -1,4 +1,7 @@
 import { Request, Response } from 'express';
+import Profile from '../models/Profile';
+import Income from '../models/Income';
+import Expense from '../models/Expense';
 
 export class LiteracyController {
   async handleChat(req: Request, res: Response) {
@@ -16,6 +19,37 @@ export class LiteracyController {
         });
       }
 
+      // Fetch user profile and financials for personalization
+      const authUser = (req as any).user;
+      let userContextPrompt = '';
+
+      if (authUser) {
+        const [profile, incomes, expenses] = await Promise.all([
+          Profile.findOne({ sessionId: authUser.userId }),
+          Income.find({ userId: authUser.userId }),
+          Expense.find({ userId: authUser.userId })
+        ]);
+
+        if (profile) {
+          const totalIncome = incomes.reduce((acc, inc) => acc + (inc.amount || 0), 0);
+          const totalExpense = expenses.reduce((acc, exp) => acc + (exp.amount || 0), 0);
+          const creditScore = profile.currentScore || 0;
+          const tokenBalance = profile.tokenBalance || 0;
+          const occupation = profile.occupation || 'business owner';
+
+          userContextPrompt = `
+You are responding to a user with the following real-time profile:
+- Name: ${profile.name}
+- Occupation: ${occupation}
+- Credit Score (SakhiScore): ${creditScore}
+- Reward Wallet Balance: ${tokenBalance} SAKHI
+- Monthly Income: ₹${totalIncome}
+- Monthly Expenses: ₹${totalExpense}
+Use these specific facts to give tailored advice, savings tips, and encouraging business feedback. For example, if they have tailors/SHG/etc. context, make analogies to that. If their expenses exceed income, gently suggest budgeting. Do not mention that you received this structured list.
+`;
+        }
+      }
+
       console.log(`AI Assistant answering message in language: ${language || 'English'}`);
 
       const { OpenRouter } = await import('@openrouter/sdk');
@@ -25,7 +59,8 @@ export class LiteracyController {
       const systemPrompt = `You are Sakhi, a warm, friendly, and encouraging financial literacy AI assistant for women entrepreneurs in India. 
 Respond in the language specified (e.g. Hindi, English, Marathi, etc.) or matching the user's input style.
 Explain financial terms (like savings, microloans, interest, EMIs, and government schemes) in simple, relatable terms. Use local analogies (like sowing seeds, running local shops, tailoring, or self-help groups).
-Keep replies encouraging, simple, and under 3-4 sentences. Always conclude with one specific next step.`;
+Keep replies encouraging, simple, and under 3-4 sentences. Always conclude with one specific next step.
+${userContextPrompt}`;
 
       // Map history to OpenRouter messages
       const formattedMessages = [
@@ -53,7 +88,7 @@ Keep replies encouraging, simple, and under 3-4 sentences. Always conclude with 
       const response = await openrouter.chat.send({
         chatRequest: {
           model: 'tencent/hy3:free',
-          messages: formattedMessages
+          messages: formattedMessages as any
         }
       });
 

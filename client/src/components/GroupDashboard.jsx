@@ -29,7 +29,9 @@ export default function GroupDashboard({ sessionId }) {
   useEffect(() => {
     const fetchGroup = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/group/${sessionId}`);
+        const res = await fetch(`http://localhost:5000/api/group/${sessionId}`, {
+          credentials: 'include'
+        });
         if (res.ok) {
           const data = await res.json();
           setGroup(data);
@@ -58,6 +60,7 @@ export default function GroupDashboard({ sessionId }) {
       const res = await fetch(`http://localhost:5000/api/group/${sessionId}/message`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ text: textToSend })
       });
       if (res.ok) {

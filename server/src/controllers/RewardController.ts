@@ -20,15 +20,45 @@ export class RewardController {
         await profile.save();
       }
 
-      // Sync balance with blockchain
-      const chainBalance = await blockchainService.getSakhiBalance(profile.walletAddress);
-      if (profile.tokenBalance !== chainBalance) {
-        profile.tokenBalance = chainBalance;
+      // Self-heal: Award Profile Setup Bonus if not already awarded
+      const hasSetupBonus = profile.tokenHistory?.some((item: any) => 
+        item.description && 
+        (item.description.includes('Profile Setup Bonus') || item.description.includes('Profile Setup'))
+      );
+
+      if (!hasSetupBonus) {
+        console.log(`Self-healing: Awarding missing 100 SAKHI Profile Setup Bonus to user ${sessionId}`);
+        const txResult = await blockchainService.earnTokens(
+          profile.walletAddress,
+          100,
+          'Profile Setup Bonus'
+        );
+        if (!profile.tokenHistory) profile.tokenHistory = [];
+        profile.tokenHistory.push({
+          amount: 100,
+          type: 'earn' as const,
+          description: 'Profile Setup Bonus',
+          date: new Date(),
+          transactionHash: txResult.transactionHash || undefined,
+          status: txResult.status
+        });
+        if (txResult.status === 'success') {
+          profile.tokenBalance = (profile.tokenBalance ?? 0) + 100;
+        }
         await profile.save();
       }
 
+      // Sync balance with blockchain only when a real provider is configured
+      if (process.env.DISTRIBUTOR_PRIVATE_KEY && process.env.TOKEN_CONTRACT_ADDRESS) {
+        const chainBalance = await blockchainService.getSakhiBalance(profile.walletAddress);
+        if (profile.tokenBalance !== chainBalance) {
+          profile.tokenBalance = chainBalance;
+          await profile.save();
+        }
+      }
+
       res.json({
-        tokenBalance: profile.tokenBalance,
+        tokenBalance: profile.tokenBalance ?? 0,
         tokenHistory: profile.tokenHistory ?? [],
         walletAddress: profile.walletAddress,
         blockchainNetwork: profile.blockchainNetwork

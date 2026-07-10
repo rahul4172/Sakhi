@@ -83,6 +83,7 @@ export class BlockchainService {
   }
 
   async getSakhiBalance(walletAddress: string): Promise<number> {
+    // No blockchain provider configured — use DB as source of truth
     if (!this.provider || !process.env.TOKEN_CONTRACT_ADDRESS) {
       try {
         const Profile = require('../models/Profile').default;

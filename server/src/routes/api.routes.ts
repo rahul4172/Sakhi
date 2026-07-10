@@ -5,8 +5,16 @@ import { financialController } from '../controllers/FinancialController';
 import { scoreController } from '../controllers/ScoreController';
 import { rewardController } from '../controllers/RewardController';
 import { literacyController } from '../controllers/LiteracyController';
+import authRoutes from './auth.routes';
+import { requireAuth } from '../middlewares/auth';
 
 const router = Router();
+
+// Auth (Unprotected)
+router.use('/auth', authRoutes);
+
+// Protect all subsequent API endpoints
+router.use(requireAuth);
 
 // Profile
 router.post('/profile', profileController.createProfile.bind(profileController));

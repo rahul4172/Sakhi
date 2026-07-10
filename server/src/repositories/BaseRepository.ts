@@ -1,4 +1,4 @@
-import { Model, Document, FilterQuery, UpdateQuery } from 'mongoose';
+import mongoose, { Model, Document } from 'mongoose';
 
 export class BaseRepository<T extends Document> {
   protected model: Model<T>;
@@ -11,11 +11,11 @@ export class BaseRepository<T extends Document> {
     return this.model.findById(id).exec();
   }
 
-  async findOne(query: FilterQuery<T>): Promise<T | null> {
+  async findOne(query: any): Promise<T | null> {
     return this.model.findOne(query).exec();
   }
 
-  async find(query: FilterQuery<T> = {}): Promise<T[]> {
+  async find(query: any = {}): Promise<T[]> {
     return this.model.find(query).exec();
   }
 
@@ -24,11 +24,11 @@ export class BaseRepository<T extends Document> {
     return document.save();
   }
 
-  async update(query: FilterQuery<T>, data: UpdateQuery<T>): Promise<T | null> {
+  async update(query: any, data: any): Promise<T | null> {
     return this.model.findOneAndUpdate(query, data, { new: true }).exec();
   }
 
-  async delete(query: FilterQuery<T>): Promise<boolean> {
+  async delete(query: any): Promise<boolean> {
     const result = await this.model.deleteOne(query).exec();
     return result.deletedCount === 1;
   }

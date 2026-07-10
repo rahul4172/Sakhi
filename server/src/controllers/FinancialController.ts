@@ -6,7 +6,7 @@ export class FinancialController {
   async addIncome(req: Request, res: Response) {
     try {
       const { sessionId } = req.params;
-      const income = await financialService.addIncome(sessionId, req.body);
+      const income = await financialService.addIncome(sessionId as string, req.body);
       res.status(201).json(income);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
@@ -16,7 +16,7 @@ export class FinancialController {
   async getIncome(req: Request, res: Response) {
     try {
       const { sessionId } = req.params;
-      const income = await financialService.getIncome(sessionId);
+      const income = await financialService.getIncome(sessionId as string);
       res.json(income);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
@@ -26,7 +26,7 @@ export class FinancialController {
   async addExpense(req: Request, res: Response) {
     try {
       const { sessionId } = req.params;
-      const expense = await financialService.addExpense(sessionId, req.body);
+      const expense = await financialService.addExpense(sessionId as string, req.body);
       res.status(201).json(expense);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
@@ -36,7 +36,7 @@ export class FinancialController {
   async getExpenses(req: Request, res: Response) {
     try {
       const { sessionId } = req.params;
-      const expenses = await financialService.getExpenses(sessionId);
+      const expenses = await financialService.getExpenses(sessionId as string);
       res.json(expenses);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
@@ -55,7 +55,7 @@ export class FinancialController {
   async getLoanMatches(req: Request, res: Response) {
     try {
       const { sessionId } = req.params;
-      const matches = await schemeService.getLoanMatches(sessionId);
+      const matches = await schemeService.getLoanMatches(sessionId as string);
       res.json(matches);
     } catch (error: any) {
       res.status(500).json({ error: error.message });

@@ -1,7 +1,6 @@
 import { MockBBPSProvider } from '../providers/MockBBPSProvider';
 import Transaction from '../models/Transaction';
 import AuditLog from '../models/AuditLog';
-import { io } from '../server'; // We will export io from server.ts
 
 const provider = new MockBBPSProvider();
 
@@ -49,7 +48,7 @@ export class PaymentService {
       billId,
       billerId,
       amount,
-      status: paymentResponse.status,
+      status: paymentResponse.status as any,
       errorMessage: paymentResponse.status === 'FAILED' ? paymentResponse.message : ''
     });
 

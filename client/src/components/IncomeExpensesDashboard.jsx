@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import FadeContent from './ui/FadeContent';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
-import { Wallet, Zap, Smartphone, Flame, ArrowUpRight, ArrowDownRight, IndianRupee } from 'lucide-react';
+import { Wallet, Zap, ArrowUpRight, ArrowDownRight, IndianRupee } from 'lucide-react';
 import { useDashboardData } from '../hooks/queries/core';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const EXPENSE_COLORS = ['#EF4444', '#F97316', '#F59E0B', '#3B82F6', '#8B5CF6'];
 
 export default function IncomeExpensesDashboard({ sessionId }) {
   const { data, isLoading } = useDashboardData(sessionId);
   const [timeframe, setTimeframe] = useState('month');
+  const { t } = useLanguage();
 
   if (isLoading) {
     return <div className="animate-pulse flex h-64 bg-surface-100 rounded-2xl"></div>;
@@ -25,17 +27,17 @@ export default function IncomeExpensesDashboard({ sessionId }) {
     <FadeContent className="max-w-[1200px] mx-auto pb-12 space-y-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-display font-bold text-[#111827]">Income & Expenses</h2>
-          <p className="text-sm text-[#6B7280] mt-1">Detailed breakdown of your cashflow.</p>
+          <h2 className="text-2xl font-display font-bold text-[#111827]">{t('nav_analytics')}</h2>
+          <p className="text-sm text-[#6B7280] mt-1">{t('cashflow_desc')}</p>
         </div>
         <select 
           value={timeframe} 
           onChange={(e) => setTimeframe(e.target.value)}
           className="bg-white border border-surface-200 text-[#111827] text-sm rounded-lg px-4 py-2 outline-none focus:border-primary-500 shadow-sm"
         >
-          <option value="month">This Month</option>
-          <option value="quarter">Last 3 Months</option>
-          <option value="year">This Year</option>
+          <option value="month">{t('this_month')}</option>
+          <option value="quarter">{t('last_3_months')}</option>
+          <option value="year">{t('this_year')}</option>
         </select>
       </div>
 
@@ -45,11 +47,11 @@ export default function IncomeExpensesDashboard({ sessionId }) {
           <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center mb-4">
             <IndianRupee className="w-5 h-5 text-white" />
           </div>
-          <p className="text-white/70 text-sm mb-1 uppercase tracking-wider font-semibold">Available Balance</p>
+          <p className="text-white/70 text-sm mb-1 uppercase tracking-wider font-semibold">{t('available_balance')}</p>
           <h3 className="text-3xl font-display font-bold mb-4">₹{balance > 0 ? balance.toLocaleString('en-IN') : 0}</h3>
           
           <div className="flex items-center gap-2 text-xs font-medium text-white/80 bg-white/5 w-fit px-3 py-1.5 rounded-full border border-white/10">
-            <span>vs last month</span>
+            <span>{t('vs_last_month')}</span>
             <span className="flex items-center text-success-400"><ArrowUpRight className="w-3 h-3"/> 12%</span>
           </div>
         </div>
@@ -59,7 +61,7 @@ export default function IncomeExpensesDashboard({ sessionId }) {
           <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
             <ArrowUpRight className="w-32 h-32 text-success-500" />
           </div>
-          <p className="text-[#6B7280] text-sm mb-1 uppercase tracking-wider font-semibold">Total Income</p>
+          <p className="text-[#6B7280] text-sm mb-1 uppercase tracking-wider font-semibold">{t('total_income')}</p>
           <h3 className="text-2xl font-display font-bold text-[#111827]">₹{totalIncome.toLocaleString('en-IN')}</h3>
         </div>
 
@@ -68,7 +70,7 @@ export default function IncomeExpensesDashboard({ sessionId }) {
           <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
             <ArrowDownRight className="w-32 h-32 text-danger-500" />
           </div>
-          <p className="text-[#6B7280] text-sm mb-1 uppercase tracking-wider font-semibold">Total Expenses</p>
+          <p className="text-[#6B7280] text-sm mb-1 uppercase tracking-wider font-semibold">{t('total_expenses')}</p>
           <h3 className="text-2xl font-display font-bold text-[#111827]">₹{totalExpenses.toLocaleString('en-IN')}</h3>
         </div>
       </div>
@@ -76,7 +78,7 @@ export default function IncomeExpensesDashboard({ sessionId }) {
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Expenses Breakdown Pie Chart */}
         <div className="premium-card p-6">
-          <h3 className="text-lg font-bold text-[#111827] mb-6">Expense Breakdown</h3>
+          <h3 className="text-lg font-bold text-[#111827] mb-6">{t('expense_breakdown')}</h3>
           {expenseData.length > 0 ? (
             <div className="flex flex-col md:flex-row items-center gap-8">
               <div className="w-48 h-48 relative">
@@ -122,15 +124,15 @@ export default function IncomeExpensesDashboard({ sessionId }) {
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center text-center py-12 opacity-60 min-h-[160px]">
-              <p className="text-sm font-medium text-[#111827]">No expenses recorded yet.</p>
-              <p className="text-xs text-[#6B7280] mt-1">Log household expenses to see your spending breakdown.</p>
+              <p className="text-sm font-medium text-[#111827]">{t('no_expenses_recorded')}</p>
+              <p className="text-xs text-[#6B7280] mt-1">{t('log_household_expenses')}</p>
             </div>
           )}
         </div>
 
         {/* Recent Transactions List */}
         <div className="premium-card p-6 flex flex-col h-full">
-          <h3 className="text-lg font-bold text-[#111827] mb-6">Transaction History</h3>
+          <h3 className="text-lg font-bold text-[#111827] mb-6">{t('transaction_history')}</h3>
           <div className="flex-1 space-y-4">
             {recentActivity && recentActivity.length > 0 ? recentActivity.map((activity, idx) => (
               <div key={idx} className="flex items-center justify-between pb-4 border-b border-surface-100 last:border-0 last:pb-0">
@@ -147,7 +149,7 @@ export default function IncomeExpensesDashboard({ sessionId }) {
                   <p className={`text-sm font-bold ${activity.type === 'INCOME' ? 'text-success-600' : 'text-[#111827]'}`}>
                     {activity.type === 'INCOME' ? '+' : '-'} ₹{activity.amount}
                   </p>
-                  <p className="text-xs text-[#6B7280] capitalize font-medium">{activity.type === 'INCOME' ? 'Income' : 'Expense'}</p>
+                  <p className="text-xs text-[#6B7280] capitalize font-medium">{activity.type === 'INCOME' ? t('total_income') : t('total_expenses')}</p>
                 </div>
               </div>
             )) : (

@@ -5,10 +5,12 @@ import TransactionHistory from './TransactionHistory';
 import { useSocket } from '../../hooks/useSocket';
 import { Bell, ShieldCheck } from 'lucide-react';
 import FadeContent from '../ui/FadeContent';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export default function BBPSLayout({ sessionId }: { sessionId: string }) {
   const [selectedBiller, setSelectedBiller] = useState<any>(null);
   const { isConnected } = useSocket(sessionId);
+  const { t } = useLanguage();
 
   return (
     <FadeContent className="max-w-[1200px] mx-auto pb-24 space-y-8">
@@ -22,9 +24,9 @@ export default function BBPSLayout({ sessionId }: { sessionId: string }) {
           <div className="inline-flex items-center gap-2 bg-white/10 px-3 py-1 rounded-full text-xs font-semibold text-white/90 mb-3 border border-white/20">
             <ShieldCheck className="w-3.5 h-3.5" /> BBPS Secure
           </div>
-          <h2 className="text-3xl font-display font-bold text-white mb-2">Pay Bills & Recharges</h2>
+          <h2 className="text-3xl font-display font-bold text-white mb-2">{t('pay_bills_title')}</h2>
           <p className="text-white/80 leading-relaxed">
-            Securely pay your household bills through the Bharat Bill Payment System. On-time payments boost your SakhiScore!
+            {t('pay_bills_subtitle')}
           </p>
         </div>
 
@@ -39,9 +41,9 @@ export default function BBPSLayout({ sessionId }: { sessionId: string }) {
             )}
           </div>
           <div>
-            <span className="block text-[10px] uppercase tracking-widest text-white/70 font-bold mb-0.5">System Status</span>
+            <span className="block text-[10px] uppercase tracking-widest text-white/70 font-bold mb-0.5">{t('system_status')}</span>
             <span className="text-sm font-semibold text-white">
-              {isConnected ? 'Live & Secure' : 'Offline'}
+              {isConnected ? t('live_secure') : 'Offline'}
             </span>
           </div>
         </div>

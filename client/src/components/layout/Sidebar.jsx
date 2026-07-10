@@ -22,17 +22,17 @@ export default function Sidebar({ profile, onNavigate, activeTab = 'home', isOpe
   const { t } = useLanguage();
 
   const navItems = [
-    { id: 'home', icon: <Home className="w-4 h-4" />, label: 'Dashboard' },
-    { id: 'bbps', icon: <CreditCard className="w-4 h-4" />, label: 'Pay Bills (BBPS)' },
-    { id: 'score', icon: <TrendingUp className="w-4 h-4" />, label: 'My SakhiScore' },
-    { id: 'rewards', icon: <Gift className="w-4 h-4" />, label: 'Sakhi Rewards' },
-    { id: 'griha', icon: <HomeIcon className="w-4 h-4" />, label: 'Griha (Household)' },
-    { id: 'analytics', icon: <PieChart className="w-4 h-4" />, label: 'Income & Expenses' },
-    { id: 'matchmaker', icon: <Search className="w-4 h-4" />, label: 'Loan Matches' },
-    { id: 'literacy', icon: <GraduationCap className="w-4 h-4" />, label: 'Financial Learn' },
-    { id: 'schemes', icon: <FileText className="w-4 h-4" />, label: 'Schemes & Benefits' },
-    { id: 'goals', icon: <Target className="w-4 h-4" />, label: 'Goals' },
-    ...(profile?.occupation === 'SHG member' ? [{ id: 'group', icon: <Users className="w-4 h-4" />, label: 'Community' }] : []),
+    { id: 'home', icon: <Home className="w-4 h-4" />, label: t('nav_dashboard') },
+    { id: 'bbps', icon: <CreditCard className="w-4 h-4" />, label: t('nav_bbps') },
+    { id: 'score', icon: <TrendingUp className="w-4 h-4" />, label: t('nav_sakhiscore') },
+    { id: 'rewards', icon: <Gift className="w-4 h-4" />, label: t('nav_rewards') },
+    { id: 'griha', icon: <HomeIcon className="w-4 h-4" />, label: t('nav_griha') },
+    { id: 'analytics', icon: <PieChart className="w-4 h-4" />, label: t('nav_analytics') },
+    { id: 'matchmaker', icon: <Search className="w-4 h-4" />, label: t('nav_loanmatches') },
+    { id: 'literacy', icon: <GraduationCap className="w-4 h-4" />, label: t('nav_learn') },
+    { id: 'schemes', icon: <FileText className="w-4 h-4" />, label: t('nav_schemes') },
+    { id: 'goals', icon: <Target className="w-4 h-4" />, label: t('nav_goals') },
+    ...(profile?.occupation === 'SHG member' ? [{ id: 'group', icon: <Users className="w-4 h-4" />, label: t('nav_community') }] : []),
   ];
 
   return (
@@ -69,11 +69,11 @@ export default function Sidebar({ profile, onNavigate, activeTab = 'home', isOpe
             />
           </div>
           <div>
-            <p className="text-[10px] text-white/60">Good morning,</p>
+            <p className="text-[10px] text-white/60">{t('good_morning')},</p>
             <p className="text-sm font-semibold truncate max-w-[140px] text-white">{profile?.name || 'Anita Sharma'}</p>
             <div className="flex items-center gap-1 mt-1 bg-white/10 w-fit px-2 py-1 rounded-full border border-white/10">
               <CheckCircle2 className="w-3 h-3 text-[#E5B59E]" />
-              <span className="text-[9px] text-white/80 pr-1 font-medium">Verified User</span>
+              <span className="text-[9px] text-white/80 pr-1 font-medium">{t('verified_user')}</span>
             </div>
           </div>
         </div>
@@ -104,27 +104,27 @@ export default function Sidebar({ profile, onNavigate, activeTab = 'home', isOpe
       <div className="px-3 space-y-1">
         <button onClick={() => { onNavigate('documents'); onClose?.(); }} className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-medium text-white/60 hover:bg-white/5 hover:text-white transition-colors">
           <FileText className="w-4 h-4 text-white/40" />
-          <span>Documents</span>
+          <span>{t('nav_documents')}</span>
         </button>
         <button onClick={() => { onNavigate('support'); onClose?.(); }} className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-medium text-white/60 hover:bg-white/5 hover:text-white transition-colors">
           <HelpCircle className="w-4 h-4 text-white/40" />
-          <span>Help & Support</span>
+          <span>{t('nav_support')}</span>
         </button>
         <button onClick={() => { onNavigate('settings'); onClose?.(); }} className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-medium text-white/60 hover:bg-white/5 hover:text-white transition-colors">
           <Settings className="w-4 h-4 text-white/40" />
-          <span>Settings</span>
+          <span>{t('nav_settings')}</span>
         </button>
       </div>
 
       {/* AI Promo Block */}
       <div className="m-4 p-4 rounded-xl bg-[#985374] relative overflow-hidden mt-4">
-        <h4 className="text-[11px] font-bold text-white mb-0.5 relative z-10">Need Personal Help?</h4>
-        <p className="text-[9px] text-white/80 mb-3 relative z-10">Talk to Sakhi AI Assistant</p>
+        <h4 className="text-[11px] font-bold text-white mb-0.5 relative z-10">{t('sidebar_ai_title')}</h4>
+        <p className="text-[9px] text-white/80 mb-3 relative z-10">{t('sidebar_ai_subtitle')}</p>
         <button 
           onClick={() => { onNavigate('literacy'); onClose?.(); }}
           className="bg-white/10 hover:bg-white/20 text-white text-[10px] font-semibold py-1.5 px-4 rounded-md transition-colors border border-white/20 w-max relative z-10"
         >
-          Chat Now
+          {t('chat_now')}
         </button>
         <Bot className="w-20 h-20 text-white/10 absolute -right-4 -bottom-4 z-0 opacity-50" />
       </div>

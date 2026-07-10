@@ -27,6 +27,7 @@ export default function GrihaDashboard({ profile, setProfile }) {
       const res = await fetch(`http://localhost:5000/api/profile/${profile.sessionId}/griha`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(updatedFields)
       });
       if (res.ok) {

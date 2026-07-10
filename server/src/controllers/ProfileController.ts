@@ -19,7 +19,7 @@ export class ProfileController {
       res.status(201).json(profile);
     } catch (error: any) {
       if (error instanceof z.ZodError) {
-        return res.status(400).json({ error: error.errors });
+        return res.status(400).json({ error: error.issues });
       }
       res.status(500).json({ error: error.message });
     }
@@ -28,7 +28,7 @@ export class ProfileController {
   async getProfile(req: Request, res: Response) {
     try {
       const { sessionId } = req.params;
-      const data = await profileService.getProfile(sessionId);
+      const data = await profileService.getProfile(sessionId as string);
       res.json(data);
     } catch (error: any) {
       res.status(404).json({ error: error.message });

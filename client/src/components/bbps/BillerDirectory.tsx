@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useBillers } from '../../hooks/useBBPS';
 import { Search, Wallet } from 'lucide-react';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 interface BillerDirectoryProps {
   onSelectBiller: (biller: any) => void;
@@ -9,6 +10,7 @@ interface BillerDirectoryProps {
 export default function BillerDirectory({ onSelectBiller }: BillerDirectoryProps) {
   const { data: billers, isLoading } = useBillers();
   const [searchTerm, setSearchTerm] = useState('');
+  const { t } = useLanguage();
 
   if (isLoading) {
     return <div className="animate-pulse space-y-6">
@@ -29,7 +31,7 @@ export default function BillerDirectory({ onSelectBiller }: BillerDirectoryProps
       <div className="flex items-center justify-between mb-2">
         <h3 className="font-bold text-xl text-[#111827] flex items-center gap-2">
           <Wallet className="w-5 h-5 text-primary-500" />
-          Select a Biller
+          {t('select_biller')}
         </h3>
       </div>
       
@@ -37,7 +39,7 @@ export default function BillerDirectory({ onSelectBiller }: BillerDirectoryProps
         <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-surface-400 w-5 h-5" />
         <input 
           type="text" 
-          placeholder="Search for your biller (e.g., Electricity, Water)" 
+          placeholder={t('search_biller_placeholder')} 
           className="w-full pl-12 pr-4 py-3.5 bg-white border border-surface-200 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all shadow-sm text-sm font-medium text-[#111827] placeholder:text-surface-400"
           value={searchTerm}
           onChange={e => setSearchTerm(e.target.value)}
@@ -61,7 +63,7 @@ export default function BillerDirectory({ onSelectBiller }: BillerDirectoryProps
       {filteredBillers?.length === 0 && (
         <div className="text-center py-12 border border-dashed border-surface-200 rounded-2xl bg-surface-50">
           <Search className="w-8 h-8 text-surface-300 mx-auto mb-3" />
-          <p className="text-[#6B7280] font-medium">No billers found matching "{searchTerm}"</p>
+          <p className="text-[#6B7280] font-medium">{t('no_billers_found')} "{searchTerm}"</p>
         </div>
       )}
     </div>

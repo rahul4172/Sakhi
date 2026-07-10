@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "tsx src/server.ts"
+    "start": "tsx src/server.ts",
+    "test:e2e": "tsx --test --test-concurrency=1 tests/infra/liveness.test.ts tests/tier1/auth_tier1.test.ts tests/tier2/auth_tier2.test.ts tests/tier3/auth_tier3.test.ts tests/tier4/auth_tier4.test.ts"
   },
   "keywords": [],
   "author": "",
@@ -15,13 +16,20 @@
     "@types/express": "^5.0.6",
     "@types/node": "^26.1.1",
     "@types/uuid": "^10.0.0",
+    "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "ethers": "^6.17.0",
     "express": "^5.2.1",
+    "express-rate-limit": "^8.5.2",
+    "firebase-admin": "^14.1.0",
+    "google-auth-library": "^10.9.0",
     "groq-sdk": "^1.3.0",
+    "jsonwebtoken": "^9.0.3",
     "mongodb-memory-server": "^11.2.0",
     "mongoose": "^9.7.4",
+    "nodemailer": "^9.0.3",
     "pdf-lib": "^1.17.1",
     "razorpay": "^2.9.6",
     "socket.io": "^4.8.3",
@@ -31,6 +39,10 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cookie-parser": "^1.4.10",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/nodemailer": "^8.0.1",
     "solc": "^0.8.36",
     "tsx": "^4.23.0"
   }
