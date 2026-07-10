@@ -10,7 +10,7 @@ import {
   updateProfile
 } from '../firebase.js';
 
-export default function AuthPage({ onAuthSuccess }) {
+export default function AuthPage({ onAuthSuccess = () => {} }) {
   const [activeTab, setActiveTab] = useState('login'); // 'login' | 'signup' | 'forgot'
   const [showPassword, setShowPassword] = useState(false);
 
