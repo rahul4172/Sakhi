@@ -1,6 +1,33 @@
-function calculateSakhiScore({ savingsFreq, billPunctuality, incomeStability, shgStreak, trend, isShgMember }) {
+export interface ScoreBreakdownItem {
+  factor: string;
+  points: number;
+  max: number;
+  impact: 'positive' | 'neutral' | 'negative';
+  description: string;
+}
+
+export interface ScoreResult {
+  score: number;
+  breakdown: ScoreBreakdownItem[];
+}
+
+export function calculateSakhiScore({
+  savingsFreq,
+  billPunctuality,
+  incomeStability,
+  shgStreak,
+  trend,
+  isShgMember
+}: {
+  savingsFreq: number;
+  billPunctuality: number;
+  incomeStability: number;
+  shgStreak: number;
+  trend: number;
+  isShgMember: boolean;
+}): ScoreResult {
   let score = 0;
-  const breakdown = [];
+  const breakdown: ScoreBreakdownItem[] = [];
 
   let weightSavings = 30;
   let weightBills = 25;
@@ -78,5 +105,3 @@ function calculateSakhiScore({ savingsFreq, billPunctuality, incomeStability, sh
     breakdown
   };
 }
-
-module.exports = { calculateSakhiScore };

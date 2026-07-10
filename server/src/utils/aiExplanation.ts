@@ -1,11 +1,11 @@
-const Groq = require('groq-sdk');
+import Groq from 'groq-sdk';
 
 // Initialize Groq client (only if key exists)
 const groq = process.env.GROQ_API_KEY ? new Groq({
   apiKey: process.env.GROQ_API_KEY,
 }) : null;
 
-async function explainScore(scoreData, profile) {
+export async function explainScore(scoreData: any, profile: any): Promise<string> {
   const prompt = `
     You are a friendly, encouraging financial assistant named Sakhi for women in the informal economy in India. 
     Explain this alternative credit score to the user in simple, everyday language (no complex jargon).
@@ -36,7 +36,7 @@ async function explainScore(scoreData, profile) {
       });
 
       if (response && response.choices && response.choices[0] && response.choices[0].message) {
-        return response.choices[0].message.content;
+        return response.choices[0].message.content || '';
       }
     } catch (error) {
       console.error("Error communicating with OpenRouter SDK:", error);
@@ -56,7 +56,7 @@ async function explainScore(scoreData, profile) {
           { role: "user", content: prompt }
         ]
       });
-      return response.choices[0].message.content;
+      return response.choices[0].message.content || '';
     } catch (error) {
       console.error("Groq API Error:", error);
     }
@@ -65,5 +65,3 @@ async function explainScore(scoreData, profile) {
   // 3. Static fallback explanation
   return `Hi ${profile.name}! Your SakhiScore is ${scoreData.score}/100. This shows a very promising start! Like watering a small plant, small regular savings and timely bill payments will help your credit score grow tall and strong. Keep using Sakhi to record your income and payments regularly to qualify for better loan matches soon!`;
 }
-
-module.exports = { explainScore };

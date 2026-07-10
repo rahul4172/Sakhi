@@ -1,8 +1,7 @@
 import { Request, Response } from 'express';
 import { profileRepository } from '../repositories/ProfileRepository';
-// Use require for the JS utilities in the src/utils directory
-const { calculateSakhiScore } = require('../utils/scoringEngine');
-const { explainScore } = require('../utils/aiExplanation');
+import { calculateSakhiScore } from '../utils/scoringEngine';
+import { explainScore } from '../utils/aiExplanation';
 
 export class ScoreController {
   async simulateScore(req: Request, res: Response) {

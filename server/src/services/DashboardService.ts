@@ -3,8 +3,7 @@ import { incomeRepository } from '../repositories/IncomeRepository';
 import { expenseRepository } from '../repositories/ExpenseRepository';
 import { billRepository } from '../repositories/BillRepository';
 import { transactionRepository } from '../repositories/TransactionRepository';
-import { blockchainService } from './blockchainService';
-const { calculateSakhiScore } = require('../utils/scoringEngine');
+import { calculateSakhiScore } from '../utils/scoringEngine';
 
 export class DashboardService {
   async getDashboardData(userId: string) {
