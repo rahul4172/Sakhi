@@ -37,6 +37,8 @@ function App() {
   };
 
   useEffect(() => {
+    console.log("Sakhi Backend API URL in use:", API_BASE_URL);
+    // Listen for Firebase auth state changes
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         // Create/refresh the backend session cookie
