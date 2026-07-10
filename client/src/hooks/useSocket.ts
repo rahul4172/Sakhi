@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
+import { API_BASE_URL } from '../api/client';
 
 let socket: Socket | null = null;
 
@@ -8,7 +9,7 @@ export const useSocket = (userId?: string | null) => {
 
   useEffect(() => {
     if (!socket) {
-      socket = io('http://localhost:5000');
+      socket = io(API_BASE_URL);
     }
 
     const onConnect = () => {

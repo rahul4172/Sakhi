@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTransactionHistory } from '../../hooks/useBBPS';
 import { Download, AlertCircle, CheckCircle2, Clock, Activity } from 'lucide-react';
+import { API_BASE_URL } from '../../api/client';
 
 export default function TransactionHistory({ sessionId }: { sessionId: string }) {
   const { data: history, isLoading } = useTransactionHistory(sessionId);
@@ -54,7 +55,7 @@ export default function TransactionHistory({ sessionId }: { sessionId: string })
               <span className="font-bold text-[#111827] text-lg">₹{tx.amount}</span>
               {tx.status === 'SUCCESS' && (
                 <a 
-                  href={`http://localhost:5000/api/bbps/receipt/${tx.transactionId}`}
+                  href={`${API_BASE_URL}/api/bbps/receipt/${tx.transactionId}`}
                   target="_blank"
                   className="p-2 text-primary-600 hover:bg-primary-50 hover:text-primary-700 rounded-full transition-colors border border-transparent hover:border-primary-100"
                   title="Download Receipt"

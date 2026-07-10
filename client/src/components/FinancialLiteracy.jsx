@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { API_BASE_URL } from '../api/client';
 import FadeContent from './ui/FadeContent';
 import { Mic, MicOff, Volume2, VolumeX, BookOpen, Bot, Sprout, CalendarDays, Star, Handshake, TrendingUp, Flag, Check } from 'lucide-react';
 
@@ -136,7 +137,7 @@ export default function FinancialLiteracy({ sessionId }) {
     setIsTyping(true);
 
     try {
-      const res = await fetch('http://localhost:5000/api/literacy/chat', {
+      const res = await fetch(`${API_BASE_URL}/api/literacy/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

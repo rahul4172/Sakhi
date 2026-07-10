@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { API_BASE_URL } from '../api/client';
 import SplitText from './ui/SplitText';
 import Aurora from './ui/Aurora';
 import { ChevronRight, Globe, User, Briefcase, Users, Loader2 } from 'lucide-react';
@@ -31,7 +32,7 @@ export default function ProfileForm({ onComplete }) {
     const sessionId = crypto.randomUUID();
 
     try {
-      const res = await fetch('http://localhost:5000/api/profile', {
+      const res = await fetch(`${API_BASE_URL}/api/profile`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, occupation, isSHG, sessionId })

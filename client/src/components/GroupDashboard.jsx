@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import FadeContent from './ui/FadeContent';
+import { API_BASE_URL } from '../api/client';
 import { Users, Target, Flame, Send, MessageCircle, Heart, ShieldCheck } from 'lucide-react';
 
 const MOCK_GROUP = {
@@ -29,7 +30,7 @@ export default function GroupDashboard({ sessionId }) {
   useEffect(() => {
     const fetchGroup = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/group/${sessionId}`, {
+        const res = await fetch(`${API_BASE_URL}/api/group/${sessionId}`, {
           credentials: 'include'
         });
         if (res.ok) {
@@ -57,7 +58,7 @@ export default function GroupDashboard({ sessionId }) {
     setNewMessage('');
 
     try {
-      const res = await fetch(`http://localhost:5000/api/group/${sessionId}/message`, {
+      const res = await fetch(`${API_BASE_URL}/api/group/${sessionId}/message`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

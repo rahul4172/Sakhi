@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useFetchBill, usePayBill } from '../../hooks/useBBPS';
 import { AlertCircle, CheckCircle2, Loader2, ArrowLeft, Receipt, ShieldCheck } from 'lucide-react';
 import axios from 'axios';
+import { API_BASE_URL } from '../../api/client';
 
 interface PaymentWizardProps {
   biller: any;
@@ -67,7 +68,7 @@ export default function PaymentWizard({ biller, sessionId, onBack }: PaymentWiza
         return;
       }
 
-      const { data: orderData } = await axios.post('http://localhost:5000/api/bbps/pay/order', {
+      const { data: orderData } = await axios.post(`${API_BASE_URL}/api/bbps/pay/order`, {
         userId: sessionId,
         billId: billDetails.billId,
         billerId: biller.billerId,
@@ -76,7 +77,7 @@ export default function PaymentWizard({ biller, sessionId, onBack }: PaymentWiza
 
       if (orderData.sandbox) {
         console.log('Running in Developer Sandbox Payment Mode');
-        const verifyRes = await axios.post('http://localhost:5000/api/bbps/pay/verify', {
+        const verifyRes = await axios.post(`${API_BASE_URL}/api/bbps/pay/verify`, {
           userId: sessionId,
           billId: billDetails.billId,
           billerId: biller.billerId,
@@ -101,7 +102,7 @@ export default function PaymentWizard({ biller, sessionId, onBack }: PaymentWiza
         handler: async function (response: any) {
           setStep('PROCESSING');
           try {
-            const verifyRes = await axios.post('http://localhost:5000/api/bbps/pay/verify', {
+            const verifyRes = await axios.post(`${API_BASE_URL}/api/bbps/pay/verify`, {
               userId: sessionId,
               billId: billDetails.billId,
               billerId: biller.billerId,
@@ -279,7 +280,7 @@ export default function PaymentWizard({ biller, sessionId, onBack }: PaymentWiza
             </div>
             <div className="flex gap-4 w-full max-w-sm mt-6">
               <a 
-                href={`http://localhost:5000/api/bbps/receipt/${txDetails?.transactionId}`}
+                href={`${API_BASE_URL}/api/bbps/receipt/${txDetails?.transactionId}`}
                 target="_blank"
                 className="flex-1 bg-white border-2 border-primary-100 hover:border-primary-600 text-primary-700 font-bold py-3.5 rounded-xl flex justify-center items-center gap-2 transition-colors"
               >

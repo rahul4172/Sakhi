@@ -7,6 +7,7 @@ import AuthPage from './components/AuthPage';
 import Dashboard from './components/Dashboard';
 import VerifyEmail from './components/VerifyEmail';
 import ResetPassword from './components/ResetPassword';
+import { API_BASE_URL } from './api/client';
 
 axios.defaults.withCredentials = true;
 
@@ -18,7 +19,7 @@ function App() {
   const createBackendSession = async (firebaseUser, occupation = 'other') => {
     try {
       const idToken = await firebaseUser.getIdToken();
-      const { data } = await axios.post('http://localhost:5000/api/auth/firebase-session', {
+      const { data } = await axios.post(`${API_BASE_URL}/api/auth/firebase-session`, {
         idToken,
         name: firebaseUser.displayName || firebaseUser.email,
         occupation
@@ -66,7 +67,7 @@ function App() {
       // Clear Firebase session
       await signOut(auth);
       // Clear backend JWT cookie
-      await axios.post('http://localhost:5000/api/auth/logout').catch(() => {});
+      await axios.post(`${API_BASE_URL}/api/auth/logout`).catch(() => {});
     } catch (e) {
       console.error('Logout error:', e);
     }

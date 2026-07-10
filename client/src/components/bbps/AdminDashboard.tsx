@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { API_BASE_URL } from '../../api/client';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { Activity, CheckCircle, XCircle, DollarSign, Loader2, Server, ShieldAlert } from 'lucide-react';
 import FadeContent from '../ui/FadeContent';
@@ -13,8 +14,8 @@ export default function AdminDashboard() {
     const fetchAdminData = async () => {
       try {
         const [statsRes, logsRes] = await Promise.all([
-          axios.get('http://localhost:5000/api/admin/stats'),
-          axios.get('http://localhost:5000/api/admin/audit-logs')
+          axios.get(`${API_BASE_URL}/api/admin/stats`),
+          axios.get(`${API_BASE_URL}/api/admin/audit-logs`)
         ]);
         setStats(statsRes.data);
         setLogs(logsRes.data);

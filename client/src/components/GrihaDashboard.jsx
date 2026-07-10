@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { API_BASE_URL } from '../api/client';
 import FadeContent from './ui/FadeContent';
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { Receipt, TrendingUp, CheckSquare, Plus, Bell } from 'lucide-react';
@@ -24,7 +25,7 @@ export default function GrihaDashboard({ profile, setProfile }) {
 
   const updateProfile = async (updatedFields) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/profile/${profile.sessionId}/griha`, {
+      const res = await fetch(`${API_BASE_URL}/api/profile/${profile.sessionId}/griha`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
